@@ -1,0 +1,43 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: bold;
+    animation: colorChange 3s infinite;
+}
+
+@keyframes colorChange {
+    0% { color: white; }
+    25% { color: blue; }
+    50% { color: yellow; }
+    75% { color: green; }
+    100% { color: white; }
+}
+
+.button {
+    background: linear-gradient(to right, white, blue, yellow, green);
+    border: none;
+    color: black;
+    padding: 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    animation: buttonColor 3s infinite;
+}
+
+@keyframes buttonColor {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.timer {
+    font-size: 2rem;
+    color: red;
+}
