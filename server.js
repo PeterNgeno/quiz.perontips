@@ -1,34 +1,34 @@
 const express = require('express');
 const cors = require('cors');
-const { db, admin } = require('./firebase'); // Import from firebase.js
-const { logQuizAttempt } = require('./middleware/analytics');
-const quizController = require('./controllers/quizController'); // Import the controller
-const paymentController = require('./controllers/paymentController'); // Import the controller
-const authMiddleware = require('./middleware/authMiddleware'); // Import auth middleware
+const { db, admin } = require('./firebase'); // Firebase configuration
+const { logQuizAttempt } = require('./middleware/analytics'); // Analytics middleware
+const quizController = require('./controllers/quizController'); // Quiz controller
+const paymentController = require('./controllers/paymentController'); // Payment controller
+const authMiddleware = require('./middleware/authMiddleware'); // Authentication middleware
 require('dotenv').config();
 
 const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json());  // Express now handles JSON parsing directly
+app.use(express.json()); // JSON parsing middleware
 
-// Import Routes
-const productRoutes = require('./routes/productRoutes');
-const quizRoutes = require('./routes/quizRoutes');
-const bettingRoutes = require('./routes/bettingRoutes');
-const paymentRoutes = require('./routes/paymentRoutes');
+// Routes
+const productRoutes = require('./routes/productRoutes'); // Product routes
+const quizRoutes = require('./routes/quizRoutes'); // Quiz routes
+const bettingRoutes = require('./routes/bettingRoutes'); // Betting routes
+const paymentRoutes = require('./routes/paymentRoutes'); // Payment routes
 
 // Use Routes
-app.use('/api/products', productRoutes(db));
-app.use('/api/quiz', quizRoutes(db, quizController, paymentController, authMiddleware));
-app.use('/api/betting', bettingRoutes(db));
-app.use('/api/payments', paymentRoutes(db));
+app.use('/api/products', productRoutes(db)); // Product API routes
+app.use('/api/quiz', quizRoutes(db, quizController, paymentController, authMiddleware)); // Quiz API routes
+app.use('/api/betting', bettingRoutes(db)); // Betting API routes
+app.use('/api/payments', paymentRoutes(db)); // Payment API routes
 
 // Analytics Logging Middleware
 app.use(async (req, res, next) => {
   try {
-    const path = req.path;
+    const path = req.path; // Log request path
     await logQuizAttempt(path);
     next();
   } catch (error) {
@@ -39,13 +39,13 @@ app.use(async (req, res, next) => {
 
 // Default Route
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to PeronTipsLimited API' });
+  res.json({ message: 'Welcome to SangPoint API' });
 });
 
-// Example Route to Log Quiz Attempts
+// Log Quiz Attempts
 app.post('/api/quiz/attempt', async (req, res) => {
   try {
-    const { userId, section, score, passed } = req.body;
+    const { userId, section, score, passed } = req.body; // Get quiz attempt details
     await logQuizAttempt(userId, section, score, passed);
     res.json({ message: 'Quiz attempt logged successfully', score });
   } catch (error) {
@@ -54,17 +54,17 @@ app.post('/api/quiz/attempt', async (req, res) => {
   }
 });
 
-// Payment Route - Handling Payment Initiation (Mpesa STK Push)
-app.post('/api/payments/initiate', paymentController.initiatePayment);
+// Payment Initiation Route
+app.post('/api/payments/initiate', paymentController.initiatePayment); // Mpesa STK Push
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+  console.error(err.stack); // Log the error stack
+  res.status(500).json({ error: 'Something went wrong!' }); // Return generic error message
 });
 
 // Start the Server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000; // Use environment port or default 5000
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
