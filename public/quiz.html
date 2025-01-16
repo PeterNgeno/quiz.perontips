@@ -8,6 +8,9 @@
 </head>
 <body>
     <div id="payment-container">
+        <h2>Enter your phone number (starting with +254):</h2>
+        <input type="text" id="phone-number" placeholder="+254701234567" required>
+        
         <h2>Choose your timer duration:</h2>
         <select id="timer-duration">
             <option value="30">30 seconds - Ksh 50</option>
@@ -16,6 +19,7 @@
             <option value="70">70 seconds - Ksh 200</option>
             <option value="100">100 seconds - Ksh 400</option>
         </select>
+        
         <button class="button" onclick="initiatePayment()">Proceed with Payment</button>
     </div>
 
@@ -36,13 +40,21 @@
 
         // Payment handling (simulating STK Push)
         function initiatePayment() {
+            const phoneNumber = document.getElementById('phone-number').value;
             const selectedTimer = document.getElementById('timer-duration').value;
             const paymentAmount = calculatePayment(selectedTimer);
+
+            // Validate phone number format
+            const phonePattern = /^\+254\d{9}$/;
+            if (!phonePattern.test(phoneNumber)) {
+                alert('Invalid phone number. It must start with +254 followed by 9 digits.');
+                return;
+            }
 
             // Simulate a payment process here (replace this with actual Mpesa STK Push API logic)
             if (paymentAmount) {
                 alert(`You are about to pay Ksh ${paymentAmount} for a ${selectedTimer} second timer.`);
-                processPayment(paymentAmount, selectedTimer);
+                processPayment(paymentAmount, selectedTimer, phoneNumber);
             } else {
                 alert('Please select a valid timer duration.');
             }
@@ -60,7 +72,7 @@
             }
         }
 
-        function processPayment(amount, duration) {
+        function processPayment(amount, duration, phoneNumber) {
             // Here you would replace this with the actual API call to the backend
             // Simulating an STK Push payment success
             setTimeout(() => {
