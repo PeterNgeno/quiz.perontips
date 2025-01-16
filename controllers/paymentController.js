@@ -3,12 +3,12 @@ const axios = require('axios');
 const initiatePayment = async (req, res) => {
     const { amount, timerDuration, phoneNumber } = req.body;
     
-    // Safaricom credentials and API URL
+    // Retrieve credentials from environment variables
     const consumerKey = process.env.CONSUMER_KEY;
     const consumerSecret = process.env.CONSUMER_SECRET;
-    const shortcode = process.env.LIPA_NA_MPESA_SHORTCODE;
-    const lipaNaMpesaOnlineShortcode = process.env.LIPA_NA_MPESA_SHORTCODE;
-    const lipaNaMpesaOnlineShortcodeKey = process.env.LIPA_NA_MPESA_ONLINE_SHORTCODE_KEY;
+    const shortcode = process.env.LIPA_NA_MPESA_SHORTCODE;  // Your business shortcode
+    const lipaNaMpesaOnlineShortcode = process.env.LIPA_NA_MPESA_SHORTCODE;  // Your business shortcode
+    const lipaNaMpesaOnlineShortcodeKey = process.env.LIPA_NA_MPESA_ONLINE_SHORTCODE_KEY;  // Your passkey
     
     // Authenticate with Safaricom API
     const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
@@ -23,16 +23,16 @@ const initiatePayment = async (req, res) => {
         
         // Prepare the STK Push parameters
         const payload = {
-            BusinessShortcode: lipaNaMpesaOnlineShortcode,
-            LipaNaMpesaOnlineShortcodeKey: lipaNaMpesaOnlineShortcodeKey,
+            BusinessShortcode: lipaNaMpesaOnlineShortcode,  // Shortcode from Daraja API
+            LipaNaMpesaOnlineShortcodeKey: lipaNaMpesaOnlineShortcodeKey,  // Passkey from Daraja API
             PhoneNumber: phoneNumber,  // User's phone number passed from frontend
             AccountReference: "SANGPOINT",  // Reference for the transaction
             TransactionDesc: `Payment for quiz section with ${timerDuration} seconds timer`,
             Amount: amount,
             PartyA: phoneNumber,  // User's phone number
             PartyB: lipaNaMpesaOnlineShortcode,  // Your business shortcode
-            Shortcode: lipaNaMpesaOnlineShortcode,
-            LipaNaMpesaShortcodeKey: lipaNaMpesaOnlineShortcodeKey
+            Shortcode: lipaNaMpesaOnlineShortcode,  // Your business shortcode
+            LipaNaMpesaShortcodeKey: lipaNaMpesaOnlineShortcodeKey  // Passkey
         };
         
         // Send the STK Push Request to the Safaricom API
