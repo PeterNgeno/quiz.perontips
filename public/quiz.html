@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz - Peron Tips Limited</title>
+    <title>Quiz - SangPoint</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="payment-container">
-        <h2>Enter your phone number (starting with +254):</h2>
-        <input type="text" id="phone-number" placeholder="+254701234567" required>
-        
         <h2>Choose your timer duration:</h2>
+        
+        <!-- Phone Number Input -->
+        <label for="phone-number">Enter your phone number (starting with +254):</label>
+        <input type="text" id="phone-number" placeholder="e.g. +254XXXXXXXXX" required />
+        
+        <h3>Select Timer Duration:</h3>
         <select id="timer-duration">
             <option value="30">30 seconds - Ksh 50</option>
             <option value="40">40 seconds - Ksh 100</option>
@@ -73,20 +76,35 @@
         }
 
         function processPayment(amount, duration, phoneNumber) {
-            // Here you would replace this with the actual API call to the backend
-            // Simulating an STK Push payment success
-            setTimeout(() => {
-                alert(`Payment of Ksh ${amount} successful. Starting the quiz with a ${duration} second timer.`);
-                
-                // Hide the payment section and show the quiz
-                document.getElementById('payment-container').style.display = 'none';
-                document.getElementById('quiz-container').style.display = 'block';
+            // Replace this with your actual backend API call
+            fetch('/api/payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ amount, phoneNumber, timerDuration: duration }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`Payment of Ksh ${amount} successful. Starting the quiz with a ${duration} second timer.`);
+                    
+                    // Hide the payment section and show the quiz
+                    document.getElementById('payment-container').style.display = 'none';
+                    document.getElementById('quiz-container').style.display = 'block';
 
-                // Start the quiz timer
-                timeLeft = duration;
-                startTimer();
-                renderQuestions();
-            }, 2000); // Simulating the payment processing delay
+                    // Start the quiz timer
+                    timeLeft = duration;
+                    startTimer();
+                    renderQuestions();
+                } else {
+                    alert('Payment failed. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Payment error:', error);
+                alert('An error occurred while processing the payment.');
+            });
         }
 
         function startTimer() {
