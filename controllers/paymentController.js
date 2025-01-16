@@ -55,4 +55,23 @@ const initiatePayment = async (req, res) => {
     }
 };
 
-module.exports = { initiatePayment };
+// Callback function to handle payment status updates
+const handleCallback = (req, res) => {
+    const { Body } = req.body;
+
+    if (Body.stkCallback) {
+        const { ResultCode, ResultDesc, CallbackMetadata } = Body.stkCallback;
+
+        if (ResultCode === 0) {
+            // Payment successful
+            console.log("Payment Successful:", CallbackMetadata);
+            // Save transaction details in the database or perform further operations
+        } else {
+            console.log("Payment Failed:", ResultDesc);
+        }
+    }
+
+    res.status(200).json({ message: "Callback received and processed" });
+};
+
+module.exports = { initiatePayment, handleCallback };
