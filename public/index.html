@@ -7,11 +7,6 @@
     <meta name="keywords" content="quiz, win money, Peron Tips, online quiz, Kenya">
     <meta name="author" content="Peron Tips Limited">
     <meta name="robots" content="index, follow">
-    <meta property="og:title" content="Peron Tips - Win Up To Ksh 10,000 in 10 Seconds!">
-    <meta property="og:description" content="Participate in quick quizzes and win amazing cash prizes!">
-    <meta property="og:image" content="https://i.imgur.com/Rw97AuW.jpeg">
-    <meta property="og:url" content="https://quiz-perontips.vercel.app/">
-    <meta name="twitter:card" content="summary_large_image">
     <title>Peron Tips - Win Up To Ksh 10,000 in 10 Seconds!</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -22,9 +17,25 @@
     <img src="https://i.imgur.com/Rw97AuW.jpeg" alt="Peron Tips - Trusted Online Quiz Platform" style="width: 300px; height: auto; display: block; margin: 0 auto;">
     <button class="button" onclick="goToLogin()">CONTINUE</button>
 
+    <!-- Buttons for additional pages -->
+    <div style="margin-top: 20px; text-align: center;">
+        <button class="button" onclick="goToAdmin()">Admin Panel</button>
+        <button class="button" onclick="goToBetting()">Betting</button>
+        <button class="button" onclick="goToShop()">Shop</button>
+    </div>
+
     <script>
         function goToLogin() {
             window.location.href = 'login.html'; // Redirect to login page
+        }
+        function goToAdmin() {
+            window.location.href = 'admin.html'; // Redirect to admin page
+        }
+        function goToBetting() {
+            window.location.href = 'betting.html'; // Redirect to betting page
+        }
+        function goToShop() {
+            window.location.href = 'shop.html'; // Redirect to shop page
         }
     </script>
 </body>
