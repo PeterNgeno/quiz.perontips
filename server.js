@@ -1,11 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const { db, admin } = require('./firebase'); // Firebase configuration
+require('dotenv').config();
+
 const { logQuizAttempt } = require('./middleware/analytics'); // Analytics middleware
 const quizController = require('./controllers/quizController'); // Quiz controller
 const paymentController = require('./controllers/paymentController'); // Payment controller
 const authMiddleware = require('./middleware/authMiddleware'); // Authentication middleware
-require('dotenv').config();
+const authRoutes = require('./routes/authRoutes'); // Authentication routes
+const adminRoutes = require('./routes/adminRoutes'); // Admin routes
 
 const app = express();
 
@@ -14,16 +16,14 @@ app.use(cors());
 app.use(express.json()); // JSON parsing middleware
 
 // Routes
-const productRoutes = require('./routes/productRoutes'); // Product routes
 const quizRoutes = require('./routes/quizRoutes'); // Quiz routes
-const bettingRoutes = require('./routes/bettingRoutes'); // Betting routes
 const paymentRoutes = require('./routes/paymentRoutes'); // Payment routes
 
 // Use Routes
-app.use('/api/products', productRoutes(db)); // Product API routes
-app.use('/api/quiz', quizRoutes(db, quizController, paymentController, authMiddleware)); // Quiz API routes
-app.use('/api/betting', bettingRoutes(db)); // Betting API routes
-app.use('/api/payments', paymentRoutes(db)); // Payment API routes
+app.use('/auth', authRoutes); // Authentication routes
+app.use('/api/quiz', quizRoutes); // Quiz API routes
+app.use('/api/payments', paymentRoutes); // Payment API routes
+app.use('/admin', authMiddleware.verifyAdmin, adminRoutes); // Admin panel routes (protected)
 
 // Analytics Logging Middleware
 app.use(async (req, res, next) => {
@@ -39,7 +39,7 @@ app.use(async (req, res, next) => {
 
 // Default Route
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to SangPoint API' });
+  res.json({ message: 'Welcome to Peron Tips API' });
 });
 
 // Log Quiz Attempts
