@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const { logQuizAttempt } = require('./middleware/analytics'); // Analytics middleware
@@ -14,10 +15,16 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json()); // JSON parsing middleware
+app.use(express.static(path.join(__dirname, 'public'))); // Serve static files (HTML, CSS, JS)
 
 // Routes
 const quizRoutes = require('./routes/quizRoutes'); // Quiz routes
 const paymentRoutes = require('./routes/paymentRoutes'); // Payment routes
+
+// Serve static admin login page
+app.get('/admin_login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/admin_login.html'));
+});
 
 // Use Routes
 app.use('/auth', authRoutes); // Authentication routes
