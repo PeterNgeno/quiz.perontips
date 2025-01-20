@@ -19,9 +19,15 @@
 
     <!-- Buttons for additional pages -->
     <div style="margin-top: 20px; text-align: center;">
+        <!-- Main Pages -->
         <button class="button" onclick="goToAdmin()">Admin Panel</button>
         <button class="button" onclick="goToBetting()">Betting</button>
         <button class="button" onclick="goToShop()">Shop</button>
+
+        <!-- Admin-Specific Pages -->
+        <button class="button" onclick="goToAdminBetting()">Admin Betting</button>
+        <button class="button" onclick="goToAdminShop()">Admin Shop</button>
+        <button class="button" onclick="goToAdminQuiz()">Admin Quiz</button>
     </div>
 
     <script>
@@ -36,6 +42,15 @@
         }
         function goToShop() {
             window.location.href = 'shop.html'; // Redirect to shop page
+        }
+        function goToAdminBetting() {
+            window.location.href = 'admin_betting.html'; // Redirect to admin betting page
+        }
+        function goToAdminShop() {
+            window.location.href = 'admin_shop.html'; // Redirect to admin shop page
+        }
+        function goToAdminQuiz() {
+            window.location.href = 'admin_quiz.html'; // Redirect to admin quiz page
         }
     </script>
 </body>
