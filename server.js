@@ -37,15 +37,12 @@ app.post('/admin_login', (req, res) => {
     password: 'Kipzz1945',
   };
 
-  // Validate admin credentials
-  if (
-    name === adminCredentials.name &&
-    email === adminCredentials.email &&
-    password === adminCredentials.password
-  ) {
-    return res.json({ message: 'Admin login successful', success: true });
+
+  // Validate credentials
+  if (email === 'perontips@gmail.com' && password === 'Kipzz1945.#') {
+    res.redirect('/admin_dashboard.html');
   } else {
-    return res.status(401).json({ error: 'Invalid admin credentials' });
+    res.status(401).send('Invalid credentials');
   }
 });
 
