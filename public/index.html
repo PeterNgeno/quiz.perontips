@@ -3,47 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login or Sign Up - Peron Tips Limited</title>
+    <meta name="description" content="Participate in quick quizzes and win up to Ksh 10,000 in just 10 seconds!">
+    <meta name="keywords" content="quiz, win money, Peron Tips, online quiz, Kenya">
+    <meta name="author" content="Peron Tips Limited">
+    <meta name="robots" content="index, follow">
+    <title>Peron Tips - Win Up To Ksh 10,000 in 10 Seconds!</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1 class="title">Peron Tips Limited</h1>
-    <p>Please login or sign up to continue</p>
+    <p>Answer Quiz and Win Up To Ksh 10,000 in 10 Seconds!</p>
 
-    <form id="login-form">
-        <label for="first-name">First Name:</label>
-        <input type="text" id="first-name" required><br>
+    <img src="https://i.imgur.com/Rw97AuW.jpeg" alt="Peron Tips - Trusted Online Quiz Platform" style="width: 300px; height: auto; display: block; margin: 0 auto;">
+    <button class="button" onclick="goToLogin()">CONTINUE</button>
 
-        <label for="last-name">Last Name:</label>
-        <input type="text" id="last-name" required><br>
+    <!-- Buttons for additional pages -->
+    <div style="margin-top: 20px; text-align: center;">
+        <!-- Main Pages -->
+        <button class="button" onclick="goToAdmin()">Admin Panel</button>
+        <button class="button" onclick="goToBetting()">Betting</button>
+        <button class="button" onclick="goToShop()">Shop</button>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" required><br>
-
-        <label for="password">Password (8-10 characters):</label>
-        <input type="password" id="password" required minlength="8" maxlength="10"><br>
-
-        <button type="submit" class="button">Login / Sign Up</button>
-    </form>
+        <!-- Admin-Specific Pages -->
+        <button class="button" onclick="goToAdminBetting()">Admin Betting</button>
+        <button class="button" onclick="goToAdminShop()">Admin Shop</button>
+        <button class="button" onclick="goToAdminQuiz()">Admin Quiz</button>
+    </div>
 
     <script>
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the form from submitting
-            const firstName = document.getElementById('first-name').value;
-            const lastName = document.getElementById('last-name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            // Here you would add the logic to either sign the user up or log them in.
-            // For now, assuming success:
-            alert('Login/Signup successful!');
-            window.location.href = 'quiz.html'; // Redirect to quiz page after login/signup
-      
-
-<button type="submit" class="button">Login / Sign Up</button>
-    </form>
-window.location.href='admin_login.html';//Redirect to admin dashboard after successful sign up
-  });
+        function goToLogin() {
+            window.location.href = 'login.html'; // Redirect to login page
+        }
+        function goToAdmin() {
+            window.location.href = 'admin.html'; // Redirect to admin page
+        }
+        function goToBetting() {
+            window.location.href = 'betting.html'; // Redirect to betting page
+        }
+        function goToShop() {
+            window.location.href = 'shop.html'; // Redirect to shop page
+        }
+        function goToAdminBetting() {
+            window.location.href = 'admin_betting.html'; // Redirect to admin betting page
+        }
+        function goToAdminShop() {
+            window.location.href = 'admin_shop.html'; // Redirect to admin shop page
+        }
+        function goToAdminQuiz() {
+            window.location.href = 'admin_quiz.html'; // Redirect to admin quiz page
+        }
     </script>
 </body>
 </html>
