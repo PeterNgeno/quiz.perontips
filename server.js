@@ -23,13 +23,7 @@ const paymentRoutes = require('./routes/paymentRoutes'); // Payment routes
 
 // Serve static admin login page
 app.get('/admin_login', (req, res) => {
-  const filePath = path.join(__dirname, 'public/admin_login.html');
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      console.error(`Error serving admin_login.html: ${err.message}`);
-      res.status(500).send('Error loading admin login page.');
-    }
-  });
+  res.sendFile(path.join(__dirname, 'public/admin_login.html'));
 });
 
 // Use Routes
@@ -41,8 +35,8 @@ app.use('/admin', authMiddleware.verifyAdmin, adminRoutes); // Admin panel route
 // Analytics Logging Middleware
 app.use(async (req, res, next) => {
   try {
-    const requestPath = req.path; // Log request path
-    await logQuizAttempt(requestPath);
+    const path = req.path; // Log request path
+    await logQuizAttempt(path);
     next();
   } catch (error) {
     console.error('Error logging analytics data:', error);
@@ -69,11 +63,6 @@ app.post('/api/quiz/attempt', async (req, res) => {
 
 // Payment Initiation Route
 app.post('/api/payments/initiate', paymentController.initiatePayment); // Mpesa STK Push
-
-// Catch-All Route for Undefined Endpoints
-app.all('*', (req, res) => {
-  res.status(404).json({ error: 'Route not found' });
-});
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
