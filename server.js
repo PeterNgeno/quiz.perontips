@@ -2,6 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
+const admin = require('firebase-admin'); // Import Firebase Admin SDK
+const serviceAccount = require('./config'); // Path to your config.js file
+
+// Initialize Firebase
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://perontipsltd.firebaseio.com" // Make sure the database URL is correct
+});
 
 const { logQuizAttempt } = require('./middleware/analytics');
 const quizController = require('./controllers/quizController');
@@ -37,12 +45,11 @@ app.post('/admin_login', (req, res) => {
     password: 'Kipzz1945',
   };
 
-
   // Validate credentials
   if (email === 'perontips@gmail.com' && password === 'Kipzz1945.#') {
     res.redirect('/admin_dashboard.html');
   } else {
-    res.status(401).send('You are not authorize for this page please contact PERON TIPS LIMITED for help ');
+    res.status(401).send('You are not authorized for this page. Please contact PERON TIPS LIMITED for help.');
   }
 });
 
