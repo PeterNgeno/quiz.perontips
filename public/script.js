@@ -2,7 +2,21 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
-const { db } = require('./firebase'); // Import Firebase Firestore instance
+
+// Import Firebase Admin SDK (for server-side use)
+const admin = require('firebase-admin');
+
+// Firebase Admin Initialization
+const serviceAccount = require('./firebase-service-account-key.json'); // Ensure this file contains your Firebase Admin credentials
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://perontipsltd-default-rtdb.firebaseio.com",
+  storageBucket: "perontipsltd.appspot.com",
+});
+
+// Firebase Firestore and Storage Instances
+const db = admin.firestore();
+const bucket = admin.storage().bucket();
 
 const app = express();
 const port = 3000;
@@ -22,22 +36,19 @@ app.get('/admin/quiz', async (req, res) => {
   const section = req.query.section;
   
   try {
-    // Fetch the quiz questions from Firestore based on the section
     const quizSnapshot = await db.collection('quizzes').where('section', '==', section).get();
-    
     if (quizSnapshot.empty) {
       return res.status(404).json({ message: 'Quiz not found' });
     }
 
     const questions = quizSnapshot.docs.map(doc => doc.data());
-    
     res.json({
       section,
       questions: questions.map(q => ({
         question: q.question,
         options: [q.option1, q.option2, q.option3],
-        correctAnswer: q.correctAnswer
-      }))
+        correctAnswer: q.correctAnswer,
+      })),
     });
   } catch (err) {
     return res.status(500).json({ message: 'Error fetching questions' });
@@ -50,18 +61,17 @@ app.post('/admin/quiz', async (req, res) => {
   try {
     const batch = db.batch();
     questions.forEach(q => {
-      const newQuizRef = db.collection('quizzes').doc();  // Create a new document for each question
+      const newQuizRef = db.collection('quizzes').doc();
       batch.set(newQuizRef, {
         section,
         question: q.question,
         option1: q.options[0],
         option2: q.options[1],
         option3: q.options[2],
-        correctAnswer: q.correctAnswer
+        correctAnswer: q.correctAnswer,
       });
     });
 
-    // Commit the batch write to Firestore
     await batch.commit();
     res.send('Questions updated successfully');
   } catch (err) {
@@ -74,9 +84,7 @@ app.post('/user/quiz/submit', async (req, res) => {
   const { answers } = req.body;
   
   try {
-    // Fetch quiz answers from Firestore
     const quizSnapshot = await db.collection('quizzes').where('section', '==', 'A').get();
-    
     if (quizSnapshot.empty) {
       return res.status(500).json({ message: 'Error fetching answers' });
     }
@@ -90,9 +98,7 @@ app.post('/user/quiz/submit', async (req, res) => {
       }
     });
 
-    // Score and decision based on the score
     if (score === 10) {
-      // Automatically proceed to payment if 100% score
       res.json({ success: true, message: 'You scored 100%! Please proceed to the payment page.' });
     } else {
       res.json({ success: false, message: `You scored ${score} out of 10. Please try again.` });
@@ -104,7 +110,6 @@ app.post('/user/quiz/submit', async (req, res) => {
 
 // Payment Routes
 app.get('/payment', (req, res) => {
-  // Logic to handle payment for quiz sections
   res.send('Payment Page');
 });
 
@@ -132,12 +137,12 @@ app.post('/admin/product', async (req, res) => {
   const { name, price, description, imageUrl } = req.body;
 
   try {
-    const newProductRef = db.collection('products').doc();  // Create a new document for the product
+    const newProductRef = db.collection('products').doc();
     await newProductRef.set({
       name,
       price,
       description,
-      imageUrl
+      imageUrl,
     });
     res.send('Product added successfully');
   } catch (err) {
@@ -154,7 +159,7 @@ app.put('/admin/product', async (req, res) => {
       name,
       price,
       description,
-      imageUrl
+      imageUrl,
     });
     res.send('Product updated successfully');
   } catch (err) {
@@ -169,3 +174,5 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+
+module.exports = { db, bucket };
