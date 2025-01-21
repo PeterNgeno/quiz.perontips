@@ -3,41 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login or Sign Up - Peron Tips Limited</title>
+    <title>Admin Login - Peron Tips Limited</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1 class="title">Peron Tips Limited</h1>
-    <p>Please login or sign up to continue</p>
+    <h1 class="title">Admin Login - Peron Tips Limited</h1>
+    <p>Please login to access the admin panel</p>
 
-    <form id="login-form">
-        <label for="first-name">First Name:</label>
-        <input type="text" id="first-name" required><br>
+    <form id="admin-login-form">
+        <label for="admin-email">Email:</label>
+        <input type="email" id="admin-email" required><br>
 
-        <label for="last-name">Last Name:</label>
-        <input type="text" id="last-name" required><br>
+        <label for="admin-password">Password:</label>
+        <input type="password" id="admin-password" required><br>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" required><br>
-
-        <label for="password">Password (8-10 characters):</label>
-        <input type="password" id="password" required minlength="8" maxlength="10"><br>
-
-        <button type="submit" class="button">Login / Sign Up</button>
+        <button type="submit" class="button">Login</button>
     </form>
 
     <script>
-        document.getElementById('login-form').addEventListener('submit', function(event) {
+        document.getElementById('admin-login-form').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent the form from submitting
-            const firstName = document.getElementById('first-name').value;
-            const lastName = document.getElementById('last-name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const adminEmail = document.getElementById('admin-email').value;
+            const adminPassword = document.getElementById('admin-password').value;
 
-            // Here you would add the logic to either sign the user up or log them in.
-            // For now, assuming success:
-            alert('Login/Signup successful!');
-            window.location.href = 'quiz.html'; // Redirect to quiz page after login/signup
+            // Example credentials for admin login
+            const validAdminEmail = "perontips@gmail.com";
+            const validAdminPassword = "peron1945";
+
+            // Validate admin credentials
+            if (adminEmail === validAdminEmail && adminPassword === validAdminPassword) {
+                alert('Admin login successful!');
+                window.location.href = 'admin_dashboard.html'; // Redirect to admin dashboard
+            } else {
+                alert('Invalid email or password');
+            }
         });
     </script>
 </body>
