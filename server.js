@@ -42,7 +42,7 @@ app.post('/admin_login', (req, res) => {
   if (email === 'perontips@gmail.com' && password === 'Kipzz1945.#') {
     res.redirect('/admin_dashboard.html');
   } else {
-    res.status(401).send('Invalid credentials');
+    res.status(401).send('You are not authorize for this page please contact PERON TIPS LIMITED for help ');
   }
 });
 
