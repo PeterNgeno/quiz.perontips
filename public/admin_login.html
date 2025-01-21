@@ -11,8 +11,12 @@
     <h1>Admin Login</h1>
     <form id="adminLoginForm">
       <div class="form-group">
-        <label for="adminName">Name:</label>
-        <input type="text" id="adminName" name="name" placeholder="Enter your name" required>
+        <label for="adminFirstName">First Name:</label>
+        <input type="text" id="adminFirstName" name="firstName" placeholder="Enter your first name" required>
+      </div>
+      <div class="form-group">
+        <label for="adminLastName">Last Name:</label>
+        <input type="text" id="adminLastName" name="lastName" placeholder="Enter your last name" required>
       </div>
       <div class="form-group">
         <label for="adminEmail">Email:</label>
@@ -32,32 +36,23 @@
       event.preventDefault();
 
       // Collect form data
-      const name = document.getElementById('adminName').value.trim();
+      const firstName = document.getElementById('adminFirstName').value.trim();
+      const lastName = document.getElementById('adminLastName').value.trim();
       const email = document.getElementById('adminEmail').value.trim();
       const password = document.getElementById('adminPassword').value.trim();
 
-      try {
-        // Send login request to server
-        const response = await fetch('/api/admin/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ name, email, password }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          // Redirect to admin panel if login is successful
-          window.location.href = 'admin_dashboard.html'; // Update with your admin panel file
-        } else {
-          // Display error message
-          document.getElementById('errorMessage').textContent = data.error || 'Invalid credentials';
-        }
-      } catch (error) {
-        console.error('Error during admin login:', error);
-        document.getElementById('errorMessage').textContent = 'An error occurred. Please try again later.';
+      // Verify if credentials match the required admin details
+      if (
+        firstName === 'Peter' &&
+        lastName === 'Ngeno' &&
+        email === 'perontips@gmail.com' &&
+        password === 'Kipzz1945.#'
+      ) {
+        // Redirect to admin panel
+        window.location.href = 'admin_dashboard.html'; // Update with your admin panel file
+      } else {
+        // Display error message
+        document.getElementById('errorMessage').textContent = 'Invalid credentials';
       }
     });
   </script>
