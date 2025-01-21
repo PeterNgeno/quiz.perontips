@@ -17,40 +17,17 @@
     <img src="https://i.imgur.com/Rw97AuW.jpeg" alt="Peron Tips - Trusted Online Quiz Platform" style="width: 300px; height: auto; display: block; margin: 0 auto;">
     <button class="button" onclick="goToLogin()">CONTINUE</button>
 
-    <!-- Buttons for additional pages -->
+    <!-- Button for admin login -->
     <div style="margin-top: 20px; text-align: center;">
-        <!-- Main Pages -->
-        <button class="button" onclick="goToAdmin()">Admin Panel</button>
-        <button class="button" onclick="goToBetting()">Betting</button>
-        <button class="button" onclick="goToShop()">Shop</button>
-
-        <!-- Admin-Specific Pages -->
-        <button class="button" onclick="goToAdminBetting()">Admin Betting</button>
-        <button class="button" onclick="goToAdminShop()">Admin Shop</button>
-        <button class="button" onclick="goToAdminQuiz()">Admin Quiz</button>
+        <button class="button" onclick="goToAdminLogin()">Admin Login</button>
     </div>
 
     <script>
         function goToLogin() {
             window.location.href = 'login.html'; // Redirect to login page
         }
-        function goToAdmin() {
-            window.location.href = 'admin.html'; // Redirect to admin page
-        }
-        function goToBetting() {
-            window.location.href = 'betting.html'; // Redirect to betting page
-        }
-        function goToShop() {
-            window.location.href = 'shop.html'; // Redirect to shop page
-        }
-        function goToAdminBetting() {
-            window.location.href = 'admin_betting.html'; // Redirect to admin betting page
-        }
-        function goToAdminShop() {
-            window.location.href = 'admin_shop.html'; // Redirect to admin shop page
-        }
-        function goToAdminQuiz() {
-            window.location.href = 'admin_quiz.html'; // Redirect to admin quiz page
+        function goToAdminLogin() {
+            window.location.href = 'admin_login.html'; // Redirect to admin login page
         }
     </script>
 </body>
