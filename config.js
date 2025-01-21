@@ -1,0 +1,15 @@
+const serviceAccount = {
+  type: "service_account",
+  project_id: "perontipsltd",
+  private_key_id: "5621bc3e11a9f7b12c9842271b8cee85ad12b5fa",
+  private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDG7d8yMa/XoRiT\nZboDx+NqxNiAD8gWpQEG53ca/toprlO9uWtdFVgreI+eeOip1aEUrfbYk42bMg7R\nUrfDfjhRT8JwminV+JsbgYlwu3kVc2RKxDH0XRZ1MSHozS9NVz33gDYb1inrEdLy\nfeWh5mxOBKVZlqipGv4gh3yjNJUNw4XqOnsg5O1s/6jBsXWdTrKRDFdsr8kXu5sS\nu3Q0TVUzAhNk9PbzYowcGXVZzFHcMnJOZZO0uK28rsnz2+QClrzxSy3TqabRI5d6\nh7VHI5wi/441VrMtNBBA3PXRewwbM9+e0ArhErt70eD4L6pRgZf1UbNw4/Xk9lKW\npkXYxLaRAgMBAAECggEAP5v4brhsneqpTRiOLn9QPOfMwsZJGNSSS37gGwW7BPD1\nXglYR1933g6i/e1zmDrzUwV9lSs5cJLFIjHtCNnncDis2Ayzq/PexSDare2EflNz\nkmTCBH1vnPGlAif6JCTtb6LTqnsE1GHSri+LqgVgRGI/7TG7pLc443XvaNB7iPaY\nEEGDn6AYJ1ReHFY1yT0kDiXlBccq3vYZeptclYnviHFR1cOsUt4RFJK9HDBgLBrt\nwG6DtVT+qqMtW+m5wDa7SbTcPoVeXXVayL/U4wBOUc044n8wGvQQXHbLm8MgNxdP\nf1vJKUYlmLZrKbPZLsvTa6Q3dj3qKDNemODEa7WW8QKBgQDnz3ZQq9FFfCX/VVhR\nPqTA4x9IN5e/N0+GZK4+xx+0E34QUCqVuqn4l9CDWT9KNDKnSKsm/Cp25rusUfjL\nT5RtMv0ryw1QBOPUs5F32VZzu8rnDVn+TjDo5T/g4dJBpVZA6jzZ6owM0WP5MN7r\neChzCaD5uChWED/3RIU4TcKSHwKBgQDbsAcDf6KJs2vlIHVDEDNurtSjLCZACogG\nmS0ggGZlh0sCKfquWOSzihoc3oXwryT0wqJhunPgWbbROEDxx5MzQAmfe1+KgrY0\ndWyePkpuAk54JvXI7Z7kgUxbaoUFwSvecM8Xr+z4EuamixPsTzJRo1OmY+M/l152\n7RXlXuiBTwKBgQCgG0GbzGBZPrs71OWQD9VZSEWl6ofL0VcC+u0CfSPfi4sJl2Ui\nT2/wPGMPJYg6Jz1JHz7fSVHHF+xNw7w0KH3awlnscm16dDYsBe6WOa2ld/JXjXg3\n1ief5B8voqlHH/woD+EBnicm/0Suq1t8hVxiwCbH87MgZk7X6SKeVc7qfwKBgQCf\nkUHm5qQ2hJ4P9P13UqMo98/3HTBDP+MBd+zxOJInmJeA4OD2Fhc32U2SPobnBTBA\nn8a2WWmlQUSqvsNdWmquxQq4TjJdNwgFHm1gmzoQoZhBaXsJEJ9itg+yLrKkNWUZ\n0rJ5MA1dOs1Rlp9H+1Y/OfSeXNtI6zdwBlDrI36ZvQKBgCNZ5pN6Z8hGnxtEWdMB\nDSBNSwJObZlI1EAUT92AOqx44mDZjkUAblk4LYmLSs2RuhEITrcxMK5RhGs/dmgJ\n2HCpbiEPVLlTzrnBOnZPjpkZumplHMSrBmPJ6Cw0adexQ7ACQs4HE7qkVaiiIIl1\nGJIF1R0Yev8MeVVdqQFUqal3\n-----END PRIVATE KEY-----\n",
+  client_email: "firebase-adminsdk-u4jfg@perontipsltd.iam.gserviceaccount.com",
+  client_id: "106876554935039214363",
+  auth_uri: "https://accounts.google.com/o/oauth2/auth",
+  token_uri: "https://oauth2.googleapis.com/token",
+  auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+  client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-u4jfg%40perontipsltd.iam.gserviceaccount.com",
+  universe_domain: "googleapis.com"
+};
+
+module.exports = serviceAccount;
