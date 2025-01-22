@@ -18,6 +18,9 @@ const authMiddleware = require('./middleware/authMiddleware');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
+// Import Betting Predictions Model
+const predictions = require('./models/predictions'); // Import the betting predictions model
+
 const app = express();
 
 // Middleware
@@ -50,6 +53,39 @@ app.post('/admin_login', (req, res) => {
     res.redirect('/admin_dashboard.html');
   } else {
     res.status(401).send('You are not authorized for this page. Please contact PERON TIPS LIMITED for help.');
+  }
+});
+
+// Handle Betting Payment
+app.post('/betting/predictions/payment', async (req, res) => {
+  const { phoneNumber, amount } = req.body;
+
+  try {
+    // Trigger STK Push
+    const paymentResult = await paymentController.initiatePayment(
+      phoneNumber,
+      amount
+    );
+
+    if (paymentResult.success) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false, message: 'Payment failed' });
+    }
+  } catch (error) {
+    console.error('Error during payment:', error);
+    res.status(500).json({ success: false, error: 'Payment processing error' });
+  }
+});
+
+// Fetch Betting Predictions
+app.get('/betting/predictions', async (req, res) => {
+  try {
+    const bettingData = await predictions.getAll(); // Fetch all predictions from Firebase
+    res.json({ predictions: bettingData });
+  } catch (error) {
+    console.error('Error fetching predictions:', error);
+    res.status(500).json({ error: 'Error loading predictions' });
   }
 });
 
