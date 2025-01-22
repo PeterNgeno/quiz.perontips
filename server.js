@@ -89,6 +89,32 @@ app.get('/betting/predictions', async (req, res) => {
   }
 });
 
+// Update Betting Predictions Route (Admin only)
+app.post('/admin/betting', async (req, res) => {
+  const predictionsData = req.body.predictions;
+
+  try {
+    // Assuming your Firebase database has a "predictions" collection
+    const db = admin.firestore();
+    const predictionsRef = db.collection('betting_predictions');
+    
+    // Loop through predictions and save them to Firebase
+    for (const prediction of predictionsData) {
+      await predictionsRef.add({
+        prediction1: prediction.p1,
+        prediction2: prediction.p2,
+        prediction3: prediction.p3,
+        createdAt: admin.firestore.FieldValue.serverTimestamp()  // Save the timestamp for sorting
+      });
+    }
+
+    res.send('Betting predictions updated successfully');
+  } catch (error) {
+    console.error('Error updating predictions:', error);
+    res.status(500).send('Error updating betting predictions');
+  }
+});
+
 // Use Routes
 app.use('/auth', authRoutes);
 app.use('/api/quiz', quizRoutes);
