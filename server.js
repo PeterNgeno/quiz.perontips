@@ -1,3 +1,4 @@
+console.log(process.env.FIREBASE_PRIVATE_KEY); // Check if the private key is loaded correctly
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
