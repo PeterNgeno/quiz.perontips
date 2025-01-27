@@ -1,48 +1,52 @@
 const axios = require('axios');
 
+// Initiate Payment
 const initiatePayment = async (req, res) => {
     const { amount, timerDuration, phoneNumber } = req.body;
-    
+
     // Retrieve credentials from environment variables
     const consumerKey = process.env.CONSUMER_KEY;
     const consumerSecret = process.env.CONSUMER_SECRET;
-    const shortcode = process.env.LIPA_NA_MPESA_SHORTCODE;  // Your business shortcode
-    const lipaNaMpesaOnlineShortcode = process.env.LIPA_NA_MPESA_SHORTCODE;  // Your business shortcode
-    const lipaNaMpesaOnlineShortcodeKey = process.env.LIPA_NA_MPESA_ONLINE_SHORTCODE_KEY;  // Your passkey
-    
-    // Authenticate with Safaricom API
-    const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
-    
+    const shortcode = process.env.LIPA_NA_MPESA_SHORTCODE;
+    const passkey = process.env.LIPA_NA_MPESA_ONLINE_SHORTCODE_KEY;
+    const callbackURL = process.env.CALLBACK_URL; // Callback URL loaded from .env
+
+    // Generate timestamp
+    const timestamp = new Date().toISOString().replace(/[-T:\.Z]/g, '').slice(0, 14);
+    const password = Buffer.from(`${shortcode}${passkey}${timestamp}`).toString('base64');
+
     try {
-        // Generate the access token using the Safaricom API
+        // Authenticate with Safaricom API
+        const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
         const tokenResponse = await axios.get('https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', {
             headers: { 'Authorization': `Basic ${auth}` }
         });
-        
+
         const accessToken = tokenResponse.data.access_token;
-        
-        // Prepare the STK Push parameters
+
+        // Prepare the STK Push payload
         const payload = {
-            BusinessShortcode: lipaNaMpesaOnlineShortcode,  // Shortcode from Daraja API
-            LipaNaMpesaOnlineShortcodeKey: lipaNaMpesaOnlineShortcodeKey,  // Passkey from Daraja API
-            PhoneNumber: phoneNumber,  // User's phone number passed from frontend
-            AccountReference: "SANGPOINT",  // Reference for the transaction
-            TransactionDesc: `Payment for quiz section with ${timerDuration} seconds timer`,
+            BusinessShortCode: shortcode,
+            Password: password,
+            Timestamp: timestamp,
+            TransactionType: "CustomerPayBillOnline",
             Amount: amount,
-            PartyA: phoneNumber,  // User's phone number
-            PartyB: lipaNaMpesaOnlineShortcode,  // Your business shortcode
-            Shortcode: lipaNaMpesaOnlineShortcode,  // Your business shortcode
-            LipaNaMpesaShortcodeKey: lipaNaMpesaOnlineShortcodeKey  // Passkey
+            PartyA: phoneNumber,
+            PartyB: shortcode,
+            PhoneNumber: phoneNumber,
+            CallBackURL: callbackURL,
+            AccountReference: "SANGPOINT",
+            TransactionDesc: `Payment for quiz section (${timerDuration} seconds timer)`
         };
-        
-        // Send the STK Push Request to the Safaricom API
+
+        // Send the STK Push request to the Safaricom API
         const stkPushResponse = await axios.post('https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest', payload, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
             }
         });
-        
+
         // Process the response
         if (stkPushResponse.status === 200) {
             res.json({ success: true, message: 'Payment request initiated. Please check your phone for payment confirmation.' });
@@ -50,8 +54,8 @@ const initiatePayment = async (req, res) => {
             res.json({ success: false, message: 'Payment initiation failed, please try again later.' });
         }
     } catch (error) {
-        console.error('Error initiating payment:', error);
-        res.json({ success: false, message: 'Payment failed, please try again' });
+        console.error('Error initiating payment:', error.response ? error.response.data : error.message);
+        res.status(500).json({ success: false, message: 'Payment failed, please try again.' });
     }
 };
 
@@ -71,7 +75,7 @@ const handleCallback = (req, res) => {
         }
     }
 
-    res.status(200).json({ message: "Callback received and processed" });
+    res.status(200).json({ message: "Callback received and processed." });
 };
 
 module.exports = { initiatePayment, handleCallback };
