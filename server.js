@@ -23,7 +23,7 @@ const serviceAccount = {
 // Initialize Firebase
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://perontipsltd.firebaseio.com" // Make sure the database URL is correct
+  databaseURL: "https://perontipsltd.firebaseio.com" // Use sandbox database URL if available
 });
 
 const { logQuizAttempt } = require('./middleware/analytics');
@@ -76,10 +76,11 @@ app.post('/betting/predictions/payment', async (req, res) => {
   const { phoneNumber, amount } = req.body;
 
   try {
-    // Trigger STK Push
+    // Trigger STK Push using sandbox endpoint
     const paymentResult = await paymentController.initiatePayment(
       phoneNumber,
-      amount
+      amount,
+      'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest' // Sandbox API
     );
 
     if (paymentResult.success) {
@@ -104,32 +105,6 @@ app.get('/betting/predictions', async (req, res) => {
   }
 });
 
-// Update Betting Predictions Route (Admin only)
-app.post('/admin/betting', async (req, res) => {
-  const predictionsData = req.body.predictions;
-
-  try {
-    // Assuming your Firebase database has a "predictions" collection
-    const db = admin.firestore();
-    const predictionsRef = db.collection('betting_predictions');
-    
-    // Loop through predictions and save them to Firebase
-    for (const prediction of predictionsData) {
-      await predictionsRef.add({
-        prediction1: prediction.p1,
-        prediction2: prediction.p2,
-        prediction3: prediction.p3,
-        createdAt: admin.firestore.FieldValue.serverTimestamp()  // Save the timestamp for sorting
-      });
-    }
-
-    res.send('Betting predictions updated successfully');
-  } catch (error) {
-    console.error('Error updating predictions:', error);
-    res.status(500).send('Error updating betting predictions');
-  }
-});
-
 // Use Routes
 app.use('/auth', authRoutes);
 app.use('/api/quiz', quizRoutes);
@@ -150,11 +125,31 @@ app.use(async (req, res, next) => {
 
 // Default Route
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to Peron Tips API' });
+  res.json({ message: 'Welcome to Peron Tips API (Sandbox Mode)' });
 });
 
 // Payment Initiation Route
-app.post('/api/payments/initiate', paymentController.initiatePayment);
+app.post('/api/payments/initiate', async (req, res) => {
+  const { phoneNumber, amount } = req.body;
+
+  try {
+    // Trigger STK Push using sandbox endpoint
+    const paymentResult = await paymentController.initiatePayment(
+      phoneNumber,
+      amount,
+      'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest' // Sandbox API
+    );
+
+    if (paymentResult.success) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false, message: 'Payment failed' });
+    }
+  } catch (error) {
+    console.error('Error during payment:', error);
+    res.status(500).json({ success: false, error: 'Payment processing error' });
+  }
+});
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
