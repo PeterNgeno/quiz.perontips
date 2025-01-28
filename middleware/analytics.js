@@ -1,6 +1,5 @@
-const admin = require('../config'); // Import the already-initialized Firebase admin instance
-
-const db = admin.firestore(); // Use Firestore database
+const admin = require('../config'); // Import initialized Firebase Admin instance
+const db = admin.firestore(); // Firestore database instance
 
 // Function to log a quiz attempt to Firestore
 async function logQuizAttempt(userId, section, score, passed) {
@@ -24,27 +23,20 @@ async function logQuizAttempt(userId, section, score, passed) {
 
 // Function to update the analytics after each quiz attempt
 async function updateAnalytics(section, passed) {
-  const analyticsRef = db.collection('analytics').doc(section); // Find the analytics document for the specific section
+  const analyticsRef = db.collection('analytics').doc(section);
 
   try {
     const doc = await analyticsRef.get();
     if (doc.exists) {
-      // If document exists, update it
       const data = doc.data();
-      const totalAttempts = data.total_attempts + 1;
-      const totalPasses = passed ? data.total_passes + 1 : data.total_passes;
-      const totalFailures = !passed ? data.total_failures + 1 : data.total_failures;
-
       await analyticsRef.update({
-        total_attempts: totalAttempts,
-        total_passes: totalPasses,
-        total_failures: totalFailures,
+        total_attempts: (data.total_attempts || 0) + 1,
+        total_passes: passed ? (data.total_passes || 0) + 1 : data.total_passes,
+        total_failures: !passed ? (data.total_failures || 0) + 1 : data.total_failures,
         last_updated: admin.firestore.FieldValue.serverTimestamp(),
       });
     } else {
-      // If document doesn't exist, create it
       await analyticsRef.set({
-        section: section,
         total_attempts: 1,
         total_passes: passed ? 1 : 0,
         total_failures: !passed ? 1 : 0,
@@ -58,7 +50,4 @@ async function updateAnalytics(section, passed) {
   }
 }
 
-module.exports = {
-  logQuizAttempt,
-  updateAnalytics,
-};
+module.exports = { logQuizAttempt, updateAnalytics };
