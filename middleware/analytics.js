@@ -1,6 +1,8 @@
-const admin = require('../config'); // Import initialized Firebase Admin instance
+const admin = require('firebase-admin'); // Import Firebase Admin
 const path = require('path'); // Import path module
-const serviceAccount = path.join(__dirname, '../service-account.json'); // Adjust path to service-account.json
+
+// Set the path to your service account key file
+const serviceAccount = path.join(__dirname, '../service-account.json'); // Adjust path if needed
 
 // Initialize Firebase Admin if not already initialized
 try {
