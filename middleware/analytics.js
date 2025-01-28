@@ -1,10 +1,10 @@
-const admin = require('firebase-admin'); // Import Firebase Admin SDK
-const db = admin.firestore(); // Firestore database instance
+const admin = require('../config'); // Import initialized Firebase Admin instance
+const path = require('path'); // Import path module
+const serviceAccount = path.join(__dirname, '../service-account.json'); // Adjust path to service-account.json
 
-// Initialize Firebase with the service account
+// Initialize Firebase Admin if not already initialized
 try {
   if (!admin.apps.length) {
-    const serviceAccount = require('../service-account.json'); // Adjusted to use correct path
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
@@ -13,6 +13,8 @@ try {
 } catch (error) {
   console.error('Error initializing Firebase:', error);
 }
+
+const db = admin.firestore(); // Firestore database instance
 
 // Function to log a quiz attempt to Firestore
 async function logQuizAttempt(userId, section, score, passed) {
