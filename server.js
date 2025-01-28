@@ -1,40 +1,39 @@
-require('dotenv').config(); // Ensure dotenv is loaded at the top
-console.log(process.env.FIREBASE_PRIVATE_KEY); // Check if the private key is loaded correctly
-
+require('dotenv').config(); // Ensure environment variables are loaded
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const admin = require('firebase-admin'); // Import Firebase Admin SDK
+const admin = require('firebase-admin');
 
-// Ensure the config.js is correctly requiring environment variables
+// Firebase service account setup using environment variables
 const serviceAccount = {
-  "type": "service_account",
-  "project_id": process.env.FIREBASE_PROJECT_ID,
-  "private_key_id": process.env.FIREBASE_PRIVATE_KEY_ID,
-  "private_key": process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'), // Fix multiline private key
-  "client_email": process.env.FIREBASE_CLIENT_EMAIL,
-  "client_id": process.env.FIREBASE_CLIENT_ID,
-  "auth_uri": process.env.FIREBASE_AUTH_URI,
-  "token_uri": process.env.FIREBASE_TOKEN_URI,
-  "auth_provider_x509_cert_url": process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
-  "client_x509_cert_url": process.env.FIREBASE_CLIENT_X509_CERT_URL
+  type: "service_account",
+  project_id: process.env.FIREBASE_PROJECT_ID,
+  private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+  private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'), // Fix multiline private key
+  client_email: process.env.FIREBASE_CLIENT_EMAIL,
+  client_id: process.env.FIREBASE_CLIENT_ID,
+  auth_uri: process.env.FIREBASE_AUTH_URI,
+  token_uri: process.env.FIREBASE_TOKEN_URI,
+  auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
+  client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
 };
 
-// Initialize Firebase
+// Initialize Firebase Admin SDK
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://perontipsltd.firebaseio.com" // Use sandbox database URL if available
+  databaseURL: process.env.FIREBASE_DATABASE_URL || "https://perontipsltd.firebaseio.com", // Use environment variable if set
 });
 
+// Import middleware, controllers, and routes
 const { logQuizAttempt } = require('./middleware/analytics');
 const quizController = require('./controllers/quizController');
 const paymentController = require('./controllers/paymentController');
 const authMiddleware = require('./middleware/authMiddleware');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-
-// Import Betting Predictions Model
-const predictions = require('./models/predictions'); // Import the betting predictions model
+const quizRoutes = require('./routes/quizRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const predictions = require('./models/predictions'); // Import betting predictions model
 
 const app = express();
 
@@ -43,44 +42,32 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
-const quizRoutes = require('./routes/quizRoutes');
-const paymentRoutes = require('./routes/paymentRoutes');
-
-// Serve static admin login page
-app.get('/admin_login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/admin_login.html'));
-});
-
 // Admin Login Route
 app.post('/admin_login', (req, res) => {
-  const { name, email, password } = req.body;
+  const { email, password } = req.body;
 
-  // Temporary admin credentials
+  // Admin credentials stored in environment variables for security
   const adminCredentials = {
-    name: 'Peter',
-    email: 'perontips@gmail.com',
-    password: 'Kipzz1945',
+    email: process.env.ADMIN_EMAIL || 'perontips@gmail.com',
+    password: process.env.ADMIN_PASSWORD || 'Kipzz1945.#',
   };
 
-  // Validate credentials
-  if (email === 'perontips@gmail.com' && password === 'Kipzz1945.#') {
+  if (email === adminCredentials.email && password === adminCredentials.password) {
     res.redirect('/admin_dashboard.html');
   } else {
-    res.status(401).send('You are not authorized for this page. Please contact PERON TIPS LIMITED for help.');
+    res.status(401).send('Unauthorized access. Please contact PERON TIPS LIMITED for support.');
   }
 });
 
-// Handle Betting Payment
+// Betting Predictions Payment
 app.post('/betting/predictions/payment', async (req, res) => {
   const { phoneNumber, amount } = req.body;
 
   try {
-    // Trigger STK Push using sandbox endpoint
     const paymentResult = await paymentController.initiatePayment(
       phoneNumber,
       amount,
-      'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest' // Sandbox API
+      process.env.MPESA_STK_PUSH_URL || 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
     );
 
     if (paymentResult.success) {
@@ -97,7 +84,7 @@ app.post('/betting/predictions/payment', async (req, res) => {
 // Fetch Betting Predictions
 app.get('/betting/predictions', async (req, res) => {
   try {
-    const bettingData = await predictions.getAll(); // Fetch all predictions from Firebase
+    const bettingData = await predictions.getAll();
     res.json({ predictions: bettingData });
   } catch (error) {
     console.error('Error fetching predictions:', error);
@@ -111,7 +98,7 @@ app.use('/api/quiz', quizRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/admin', authMiddleware.verifyAdmin, adminRoutes);
 
-// Analytics Logging Middleware
+// Log analytics data
 app.use(async (req, res, next) => {
   try {
     const path = req.path;
@@ -121,6 +108,11 @@ app.use(async (req, res, next) => {
     console.error('Error logging analytics data:', error);
     next();
   }
+});
+
+// Serve Static Admin Login Page
+app.get('/admin_login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/admin_login.html'));
 });
 
 // Default Route
@@ -133,11 +125,10 @@ app.post('/api/payments/initiate', async (req, res) => {
   const { phoneNumber, amount } = req.body;
 
   try {
-    // Trigger STK Push using sandbox endpoint
     const paymentResult = await paymentController.initiatePayment(
       phoneNumber,
       amount,
-      'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest' // Sandbox API
+      process.env.MPESA_STK_PUSH_URL || 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
     );
 
     if (paymentResult.success) {
