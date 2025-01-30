@@ -1,8 +1,9 @@
-const admin = require('firebase-admin'); // Import Firebase Admin
-const path = require('path'); // Import path module
+const admin = require('firebase-admin');
+const path = require('path');
 
-// Set the path to your service account key file
+// Path to the new service account key file
 const serviceAccount = path.join(__dirname, './service-account.json');
+
 // Initialize Firebase Admin if not already initialized
 try {
   if (!admin.apps.length) {
@@ -15,12 +16,12 @@ try {
   console.error('Error initializing Firebase:', error);
 }
 
-const db = admin.firestore(); // Firestore database instance
+const db = admin.firestore();
 
 // Function to log a quiz attempt to Firestore
 async function logQuizAttempt(userId, section, score, passed) {
   try {
-    const quizAttemptRef = db.collection('quiz_attempts').doc(); // Create a new document for each attempt
+    const quizAttemptRef = db.collection('quiz_attempts').doc();
     await quizAttemptRef.set({
       user_id: userId,
       section: section,
@@ -29,7 +30,6 @@ async function logQuizAttempt(userId, section, score, passed) {
       passed: passed,
     });
 
-    // Update the analytics for the section
     await updateAnalytics(section, passed);
     console.log('Quiz attempt logged successfully.');
   } catch (error) {
@@ -37,7 +37,7 @@ async function logQuizAttempt(userId, section, score, passed) {
   }
 }
 
-// Function to update the analytics after each quiz attempt
+// Function to update analytics
 async function updateAnalytics(section, passed) {
   const analyticsRef = db.collection('analytics').doc(section);
 
