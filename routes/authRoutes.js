@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs'); // Replaced bcrypt with bcryptjs
 const { db } = require('../firebase'); // Firestore instance
 
 // POST route for signing up
