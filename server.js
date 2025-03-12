@@ -13,7 +13,7 @@ if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
 
 try {
     // Parse the environment variable correctly
-    const rawServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT.replace(/\\\\n/g, '\\n').replace(/\\n/g, '\n');
+    const rawServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT.replace(/\\n/g, '\n');
     const serviceAccount = JSON.parse(rawServiceAccount);
 
     // Initialize Firebase Admin SDK
