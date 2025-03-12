@@ -3,24 +3,29 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const admin = require('firebase-admin');
-const fs = require("fs");
-//Check if the FIREBASE_SERVICE_ACCOUNT environment variable is not set
-if (!process.env.FIREBASE_SERVICE_ACCOUNT) {console.error("error: FIREBASE_SERVICE_ACCOUNT environment variables is not set.")
-  process.exit(1);
- }
-//Parse the environment variable correctly
-try{const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT.replace(/\\n/g, '\n'));
-  console.log("Loaded Service Account:", serviceAccount); // Debugging
+const fs = require('fs');
 
-  // Initialize Firebase Admin SDK
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-  });
+// Check if the FIREBASE_SERVICE_ACCOUNT environment variable is set
+if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
+    console.error("Error: FIREBASE_SERVICE_ACCOUNT is not set.");
+    process.exit(1);
+}
 
-  console.log("Firebase Admin SDK initialized successfully!");
+try {
+    // Parse the environment variable correctly
+    const rawServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT.replace(/\\\\n/g, '\\n').replace(/\\n/g, '\n');
+    const serviceAccount = JSON.parse(rawServiceAccount);
+
+    // Initialize Firebase Admin SDK
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+    });
+
+    console.log("Firebase Admin SDK initialized successfully!");
 } catch (error) {
-  console.error("Error parsing FIREBASE_SERVICE_ACCOUNT:", error);
-  process.exit(1);}
+    console.error("Error parsing FIREBASE_SERVICE_ACCOUNT:", error);
+    process.exit(1);
+}
 
 // Import middleware, controllers, and routes
 const { logQuizAttempt } = require('./middleware/analytics');
