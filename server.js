@@ -3,25 +3,24 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const admin = require('firebase-admin');
+const fs = require("fs");
+//Check if the FIREBASE_SERVICE_ACCOUNT environment variable is not set
+if (!process.env.FIREBASE_SERVICE_ACCOUNT) {console.error("error: FIREBASE_SERVICE_ACCOUNT environment variables is not set.")
+  process.exit(1);
+ }
 //Parse the environment variable correctly
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT.replace(/\\n/g,'\n'));
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-console.log("Firebase Admin SDK initialized successfully!");
+try{const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT.replace(/\\n/g, '\n'));
+  console.log("Loaded Service Account:", serviceAccount); // Debugging
 
-const path = require("path");
-const admin = require("firebase-admin");
+  // Initialize Firebase Admin SDK
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
 
-// Load service account key properly
-const serviceAccountPath = path.resolve(__dirname, "service-account.json");
-
-// Initialize Firebase Admin SDK
-console.log(serviceAccount);
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: process.env.FIREBASE_DATABASE_URL || "https://perontipsltd.firebaseio.com", // Use environment variable if set
-});
+  console.log("Firebase Admin SDK initialized successfully!");
+} catch (error) {
+  console.error("Error parsing FIREBASE_SERVICE_ACCOUNT:", error);
+  process.exit(1);}
 
 // Import middleware, controllers, and routes
 const { logQuizAttempt } = require('./middleware/analytics');
@@ -100,8 +99,8 @@ app.use('/admin', authMiddleware.verifyAdmin, adminRoutes);
 // Log analytics data
 app.use(async (req, res, next) => {
   try {
-    const path = req.path;
-    await logQuizAttempt(path);
+    const requestPath = req.path;  // ✅ Renamed to avoid conflict
+    await logQuizAttempt(requestPath);
     next();
   } catch (error) {
     console.error('Error logging analytics data:', error);
