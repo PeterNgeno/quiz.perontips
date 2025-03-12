@@ -3,8 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const admin = require('firebase-admin');
+//Parse the environment variable correctly
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT.replace(/\\n/g,'\n'));
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
@@ -17,6 +17,7 @@ const admin = require("firebase-admin");
 const serviceAccountPath = path.resolve(__dirname, "service-account.json");
 
 // Initialize Firebase Admin SDK
+console.log(serviceAccount);
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.FIREBASE_DATABASE_URL || "https://perontipsltd.firebaseio.com", // Use environment variable if set
